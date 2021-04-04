@@ -22,7 +22,7 @@ object Task_1_2a {
     val allProducts = lines.flatMap(x => x.split(",")).distinct()
 
     // Saving the distinct products to an output file in the out directory
-    allProducts.saveAsTextFile("out/out_1_2a.txt")
+    allProducts.coalesce(1).saveAsTextFile("out/out_1_2a.txt")
 
     spark.close()
 

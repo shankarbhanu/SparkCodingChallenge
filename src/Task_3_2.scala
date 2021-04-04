@@ -76,7 +76,7 @@ object Task_3_2 {
     val predictions = model.transform(pred_data_transformed.select("features"))
 
     // Writing the output predictions(Numerical values) to a file
-    predictions.select("prediction")
+    predictions.select("prediction").coalesce(1)
       .write
       .option("header", "true")
       .format("csv")
