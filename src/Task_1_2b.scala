@@ -2,6 +2,7 @@ package com.codingchallenge.spark
 
 import org.apache.spark.sql.SparkSession
 import org.apache.log4j._
+import org.apache.hadoop.fs._
 
 object Task_1_2b {
 
@@ -34,7 +35,12 @@ object Task_1_2b {
     result.write
       .format("csv")
       .option("header", "true")
-      .save("out/out_1_2b.txt")
+      .save("out/out_1_2b")
+
+    // Renaming the final output file to the expected naming
+    val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+    val file = fs.globStatus(new Path("out/out_1_2b/part*"))(0).getPath().getName()
+    fs.rename(new Path("out/out_1_2b/" + file), new Path("out/out_1_2b/out_1_2b.txt"))
 
     spark.close()
 

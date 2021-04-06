@@ -1,5 +1,6 @@
 package com.codingchallenge.spark
 
+import org.apache.hadoop.fs._
 import org.apache.spark.sql.SparkSession
 import org.apache.log4j._
 import org.apache.spark.ml.classification.LogisticRegression
@@ -80,7 +81,12 @@ object Task_3_2 {
       .write
       .option("header", "true")
       .format("csv")
-      .save("out/out_3_2.txt")
+      .save("out/out_3_2")
+
+    // Renaming the final output file to the expected naming
+    val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+    val file = fs.globStatus(new Path("out/out_3_2/part*"))(0).getPath().getName()
+    fs.rename(new Path("out/out_3_2/" + file), new Path("out/out_3_2/out_3_2.txt"))
 
     spark.close()
 

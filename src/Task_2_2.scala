@@ -2,6 +2,7 @@ package com.codingchallenge.spark
 
 import org.apache.spark.sql.SparkSession
 import org.apache.log4j._
+import org.apache.hadoop.fs._
 
 object Task_2_2 {
 
@@ -29,10 +30,15 @@ object Task_2_2 {
       " from airbnbtable")
 
     // Writing the results to an output file in the out directory
-    result.write
+    result.coalesce(1).write
       .option("header", "true")
       .format("csv")
-      .save("out/out_2_2.txt")
+      .save("out/out_2_2")
+
+    // Renaming the final output file to the expected naming
+    val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+    val file = fs.globStatus(new Path("out/out_2_2/part*"))(0).getPath().getName()
+    fs.rename(new Path("out/out_2_2/" + file), new Path("out/out_2_2/out_2_2.txt"))
 
     spark.close()
 
